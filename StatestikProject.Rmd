@@ -1,62 +1,131 @@
 ---
-title: "Statestik Projekt"
+title: "Pokémon Power Creep"
 author: "Christian Stochholm"
 date: "2023-11-27"
 output: pdf_document
 ---
 
-## R Markdown
+## Introduction
+Pokemon is a game much like any other that suffers from power creep that steadily increases stats over time.
+Besides a general power creep, I believe the game also leans towards making things more awesome and thereby having more so-called "Legendary" Pokemon.  
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Using a datasheet that covers six generations of Pokemon, I will visually demonstrate these two phenomenons.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+***
+
+## Project Setup
+The file for the project was retrieved here: *https://gist.github.com/armgilles/194bcff35001e7eb53a2a8b441e8b2c6*
 
 
+<!-- Echoes throughout the document to knit all of it together into a PDF. -->
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
 ```
 
-Install tidyverse package (incl. ggplot)
+Install tidyverse package (incl. ggplot2 for more graphical plots)
 ```{r}
-library(tidyverse)
 #install.packages("tidyverse")
+library(tidyverse)
 ```
 
-Read datasheet on pokemon
+Reads the Pokemon.csv file into the data frame Pokemon.
 ```{r}
 Pokemon <- readr::read_csv("pokemon.csv")
 ```
+***
 
-# Datasheet General Information
+## Dataframe General Information
+The data frame includes each Pokemon number,name,type,stats,generation and whether they are legendary or not.
 
-Datasheet Column Names
+Data frame column names & summary
 ```{r}
 colnames(Pokemon)
-```
-Datasheet summary
-```{r}
 summary(Pokemon)
 ```
+***
+
+## Type Demographic
+
+
+###Type 1 Count
+```{r}
+colors <- c('#6390F0', '#A8A77A','#A98FF3','#7AC74C', '#F95587', '#A6B91A', '#E2BF65', '#EE8130', '#A33EA1', '#B6A136', '#C22E28', '#705746', '#F7D02C', '#6F35FC', '#B7B7CE', '#735797', '#D685AD','#96D9D6')
+
+ 
+	
+ggplot(Pokemon, aes(y=reorder(`Type 1`,`Type 1`,
+                              function(y)-length(y)))) +
+  geom_bar(fill=colors,col='black')+
+  scale_x_continuous(limits=c(0,120))+
+    xlab("Count") +
+  ylab("Pokemon Types")
+```
+Diving into the the types of Pokemon a weird trend arises, while one might assume the normal type would be the most common type of Pokemon, water appears to be the most common.
+
+###Type 2 Count
+```{r}
+colors <- c('cyan','#6390F0', '#A8A77A','#A98FF3','#7AC74C', '#F95587', '#A6B91A', '#E2BF65', '#EE8130', '#A33EA1', '#B6A136', '#C22E28', '#705746', '#F7D02C', '#6F35FC', '#B7B7CE', '#735797', '#D685AD','#96D9D6')
+
+ 
+	
+ggplot(Pokemon, aes(y=reorder(`Type 2`,`Type 2`,
+                              function(y)-length(y)))) +
+  geom_bar(fill=colors,col='black')+
+  scale_x_continuous(limits=c(0,400))+
+    xlab("Count") +
+  ylab("Pokemon Types")
+```
+
+
+```{r}
+
+Pokemon$Count <- 1
+DF1 <- aggregate(Pokemon$Count,by=list(Pokemon$`Type 1`),FUN=sum)
+DF2 <- aggregate(Pokemon$Count,by=list(Pokemon$`Type 2`),FUN=sum)
+
+DF1$Type <- "Type 1"
+DF2$Type <- "Type 2"
+DF <- rbind(DF1,DF2)
+DF$Type <- as.character(DF$Type)
+
+
+ggplot(DF, aes(fill=Type, y=reorder(Group.1, x), x=x))+ 
+  geom_bar(position="stack", stat="identity")+
+  xlab("Count") +
+  ylab("Pokemon Types")
+```
+To add to this, the water type seems to heavy favor Type 1. Researching this trend further on the web led to a great explanation:  
+
+![Explanation](Explanation.png)
+
+
+***
+
+## Power Creep
+
+```{r}
+ggplot(Pokemon, aes(x=`Generation`, y=Total, color=`Type 1`))+
+  geom_point()+
+  geom_jitter()+
+  geom_smooth(formula = y ~ x, method="lm" , color="red", se=FALSE)
+  
+```
+
+***
+
+## Legendaries
+
+```{r}
+ggplot(Pokemon, aes(x= Generation, fill = `Legendary`))+
+  geom_bar()
+```
+
+
 
 I believe that normal type pokemon are the most common type of pokemon.
 
-```{r}
-ggplot(data = Pokemon) +
-  geom_bar(mapping = aes( x = "Type 1", fill = "Type 2"), color = 'black')
-```
-```{r}
-colors <- c("cyan","bisque","brown","coral","dodgerblue","gainsboro","gold",
-            "darkorchid","chartreuse","aquamarine","blue","black","darkorange",
-            "seagreen","salmon","red","palevioletred","palegreen")
+GLEMMER POKEMON UDEN TYPE 2
 
-ggplot(Pokemon,
-                aes(x=reorder(`Type 1`,`Type 1`,
-                              function(x)-length(x)))) +
-  geom_bar(fill=colors,col='black')+
-  scale_y_continuous(limits=c(0,120))+
-    ylab("Count") +
-  xlab("Type 1 of Non-Legendary Pokemons")
 ```
 
 
