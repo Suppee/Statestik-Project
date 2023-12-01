@@ -43,8 +43,9 @@ summary(Pokemon)
 ***
 
 ## Type Demographic
-Pokemon types are separated into 18 categories, each Pokemon has at least one type which represents their primary type and a potential secondary type but that is not always the case.
-I believe that the Normal Type Pokemon are the most common type of Pokemon, to visualize this we have to understand that the two types (Type 1 & Type 2) are two seperate data fields.
+Pokemon types are separated into 18 categories, each Pokemon has at least one type which represents their primary type and a potential secondary type but that is not always the case.  
+I believe that the Normal Type Pokemon are the most common type of Pokemon, to visualize this we have to understand that the two types (Type 1 & Type 2) are two separate data fields.  
+To visually display this we will use a bar graph to count the amount (X Axis) of each type (Y Axis)
 
 ### Type 1 Count
 ```{r}
@@ -108,7 +109,7 @@ Combining the two types into one graph shows that the water type seems to still 
 
 ## Power Creep
 A typical trend in games with a long running service time is power creep, where things in the game will increase in power over time.  
-To show this, we seperate Pokemon into generations and look at their stats over time. Pokemon have many stats so to simplify we will only look at the Total Stat (All stats combined), HP, Attack and Defense which are all basic stats.
+To show this, we'll use linear regression by seperate Pokemon into generations on the X axis and plot every Pokemon's Total Stat and look at their stats over time (Generations).  Pokemon have many stats so to simplify we will only look at four graphs that each have one stat: the Total Stat (All stats combined), HP, Attack and Defense, which are all basic stats.
 
 ### Total Stat per Generation
 ```{r}
