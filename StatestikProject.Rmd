@@ -1,24 +1,22 @@
 ---
-title: "Pokémon Power Creep"
+title: "Pokémon Data Analysis"
 author: "Christian Stochholm"
 date: "2023-11-27"
 output: pdf_document
 ---
 
 ## Introduction
-Pokemon is a game much like any other that suffers from power creep that steadily increases stats over time.
-Besides a general power creep, I believe the game also leans towards making things more awesome and thereby having more so-called "Legendary" Pokemon.  
-
-Using a datasheet that covers six generations of Pokemon, I will visually demonstrate these two phenomenons.
+Pokemon is a game that has been built on for more than 20 years and therefore have a lot of data on individuals Pokemon. In this project I will dive into different aspect of Pokémon through visually presenting the data.
 
 ***
 
 ## Project Setup
-The file for the project was retrieved here: *https://gist.github.com/armgilles/194bcff35001e7eb53a2a8b441e8b2c6*
+The file for the project was retrieved here:
+[GitRepo](https://gist.github.com/armgilles/194bcff35001e7eb53a2a8b441e8b2c6)
 
 
 <!-- Echoes throughout the document to knit all of it together into a PDF. -->
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, warning= FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -35,7 +33,7 @@ Pokemon <- readr::read_csv("pokemon.csv")
 ***
 
 ## Dataframe General Information
-The data frame includes each Pokemon number,name,type,stats,generation and whether they are legendary or not.
+The data frame includes each Pokemon number, name, type, stats, generation and whether they are legendary or not.
 
 Data frame column names & summary
 ```{r}
@@ -45,9 +43,10 @@ summary(Pokemon)
 ***
 
 ## Type Demographic
+Pokemon types are separated into 18 categories, each Pokemon has at least one type which represents their primary type and a potential secondary type but that is not always the case.
+I believe that the Normal Type Pokemon are the most common type of Pokemon, to visualize this we have to understand that the two types (Type 1 & Type 2) are two seperate data fields.
 
-
-###Type 1 Count
+### Type 1 Count
 ```{r}
 colors <- c('#6390F0', '#A8A77A','#A98FF3','#7AC74C', '#F95587', '#A6B91A', '#E2BF65', '#EE8130', '#A33EA1', '#B6A136', '#C22E28', '#705746', '#F7D02C', '#6F35FC', '#B7B7CE', '#735797', '#D685AD','#96D9D6')
 
@@ -60,11 +59,11 @@ ggplot(Pokemon, aes(y=reorder(`Type 1`,`Type 1`,
     xlab("Count") +
   ylab("Pokemon Types")
 ```
-Diving into the the types of Pokemon a weird trend arises, while one might assume the normal type would be the most common type of Pokemon, water appears to be the most common.
+Basing our graph only on "Type 1" shows that Water appears to be the most common type, but this does not represent all the types available. For this we need to show Type 2 as well.
 
-###Type 2 Count
+### Type 2 Count
 ```{r}
-colors <- c('cyan','#6390F0', '#A8A77A','#A98FF3','#7AC74C', '#F95587', '#A6B91A', '#E2BF65', '#EE8130', '#A33EA1', '#B6A136', '#C22E28', '#705746', '#F7D02C', '#6F35FC', '#B7B7CE', '#735797', '#D685AD','#96D9D6')
+colors <- c('blue','#6390F0', '#A8A77A','#A98FF3','#7AC74C', '#F95587', '#A6B91A', '#E2BF65', '#EE8130', '#A33EA1', '#B6A136', '#C22E28', '#705746', '#F7D02C', '#6F35FC', '#B7B7CE', '#735797', '#D685AD','#96D9D6')
 
  
 	
@@ -75,8 +74,10 @@ ggplot(Pokemon, aes(y=reorder(`Type 2`,`Type 2`,
     xlab("Count") +
   ylab("Pokemon Types")
 ```
+The graph for Type 2 shows a completely different scenario than before with NA being the most common occuring, this can be attributed to the fact that not all Pokemon has a secondary type but rather close to half of them that has a secondary type.
 
-
+### Type 1 & 2 Combined
+To get a better understanding, the two graphs can be combined.
 ```{r}
 
 Pokemon$Count <- 1
@@ -94,39 +95,66 @@ ggplot(DF, aes(fill=Type, y=reorder(Group.1, x), x=x))+
   xlab("Count") +
   ylab("Pokemon Types")
 ```
-To add to this, the water type seems to heavy favor Type 1. Researching this trend further on the web led to a great explanation:  
+
+### Conclusion
+
+Combining the two types into one graph shows that the water type seems to still be the most common type with normal coming in at second place and third taken by flying but mostly as a secondary stat. Researching this trend with water types further on the web led to a great explanation:  
 
 ![Explanation](Explanation.png)
+
 
 
 ***
 
 ## Power Creep
+A typical trend in games with a long running service time is power creep, where things in the game will increase in power over time.  
+To show this, we seperate Pokemon into generations and look at their stats over time. Pokemon have many stats so to simplify we will only look at the Total Stat (All stats combined), HP, Attack and Defense which are all basic stats.
 
+### Total Stat per Generation
 ```{r}
-ggplot(Pokemon, aes(x=`Generation`, y=Total, color=`Type 1`))+
+ggplot(Pokemon, aes(x=`Generation`, y=Total, color=`Legendary`))+
   geom_point()+
   geom_jitter()+
   geom_smooth(formula = y ~ x, method="lm" , color="red", se=FALSE)
   
 ```
 
+
+### HP Stat per Generation
+```{r}
+ggplot(Pokemon, aes(x=`Generation`, y=HP, color=`Legendary`))+
+  geom_point()+
+  geom_jitter()+
+  geom_smooth(formula = y ~ x, method="lm" , color="red", se=FALSE)
+  
+```
+
+### Attack Stat per Generation
+```{r}
+ggplot(Pokemon, aes(x=`Generation`, y=Attack, color=`Type 1`))+
+  geom_point()+
+  geom_jitter()+
+  geom_smooth(formula = y ~ x, method="lm" , color="red", se=FALSE)
+  
+```
+
+### Defense Stat per Generation
+```{r}
+ggplot(Pokemon, aes(x=`Generation`, y=Defense, color=`Type 1`))+
+  geom_point()+
+  geom_jitter()+
+  geom_smooth(formula = y ~ x, method="lm" , color="red", se=FALSE)
+  
+```
+
+### Conclusion
+On all four occasions there is a slight power creep over 6 Generations showing that the trend towards power creep also happens in Pokemon.  
+
+Besides the power creep, we also have a display of legendaries vs non-legendaries in the two first graphs (Total and HP) which shows that as expected Legendaries generally have higher Total stats than non-legendaries but their HP stat are not always the highest which means that one or more of their other stats must be higher on average.  
+
+The last two shows types instead of legendaries and there is a correlation between rock and steel types having higher defense on average but nothing else besides that without diving further into Types and Stats.
+
 ***
 
-## Legendaries
-
-```{r}
-ggplot(Pokemon, aes(x= Generation, fill = `Legendary`))+
-  geom_bar()
-```
 
 
-
-I believe that normal type pokemon are the most common type of pokemon.
-
-GLEMMER POKEMON UDEN TYPE 2
-
-```
-
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
